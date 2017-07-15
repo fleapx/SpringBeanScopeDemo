@@ -5,14 +5,11 @@
 > * 原理
 > * 使用session scope
 > * 自定义thread scope（代码copy自网络）
-> * 注册thread scope
+> * 注册 thread scope 实现
 > * 实现自己的 ThreadScoped 注解
 > * TODO 现在的范例代码的问题
 > * 笔记1：保存运行时生成的class
 > * 笔记2：control支持返回json
-
-
-![大纲](/pictures/all.png) 
 
 
 # 原理
@@ -47,7 +44,7 @@ ThreadScope.get(), name=scopedTarget.threadBean1
 ```Java
 // FIXME 指定session作用域，如果不设置proxyMode会报错
 // FIXME 设置为ScopedProxyMode.INTERFACES也会报错
-//@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 ```
 
 或者
@@ -57,11 +54,13 @@ ThreadScope.get(), name=scopedTarget.threadBean1
 
 使用 `@SessionScope` 更加方便，不需要指定 proxyMode，是因为他默认值就是 `ScopedProxyMode.TARGET_CLASS`。
 
-# 自定义thread scope（代码copy自网络）
+# 自定义 thread scope 实现（代码copy自网络）
 
-代码见 `cn.xiaowenjie.springbeanscopedemo.myscope.ThreadScope`。
+代码见 `cn.xiaowenjie.springbeanscopedemo.myscope.ThreadScope`。实现 `org.springframework.beans.factory.config.Scope` 接口。
 
-# 注册thread scope
+[代码](https://github.com/xwjie/SpringBeanScopeDemo/blob/master/springbeanscopedemo/springbeanscopedemo/src/main/java/cn/xiaowenjie/springbeanscopedemo/myscope/ThreadScope.java)
+
+# 注册 thread scope
 
 spring boot注册如下，注册一个 `CustomScopeConfigurer` 即可：
 
@@ -132,14 +131,14 @@ public @interface SessionScope {
 
 ```Java
 //FIXME 或者下面这样配置，必须指定代理，否则不生效
-//@Scope(value = ThreadScope.THREAD, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value = ThreadScope.THREAD, proxyMode = ScopedProxyMode.TARGET_CLASS)
 ```
 
 > 必须指定代理实例（CGLIB），否则controller注入的就是单例了。
 
 # TODO 现在的范例代码的问题
 
-问题是使用了 `ThreadLocal` 没有清理，在tomcat容器线程重用的时候会使用了原来的实例，我在sts上tomcat默认10个线程，刷11次就会发现这个问题。
+问题是使用了 `ThreadLocal` 没有清理，在tomcat容器线程重用的时候会使用了原来的实例，我的sts上tomcat默认10个线程，刷11次就会发现这个问题。
 
 最简单可以使用 `ServletRequestListener` 监听request清理。
 
