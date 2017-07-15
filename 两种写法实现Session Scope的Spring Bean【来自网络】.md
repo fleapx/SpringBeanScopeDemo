@@ -3,16 +3,17 @@
 来自网络
 
 xml based:
-
+```XML
 <bean id="localRepository" class="com.demo.bean.LocalRepository" scope="session">
     <!-- To effects the proxying when used as dependencies by singleton beans. This requires CGLIB -->
     <aop:scoped-proxy />
 </bean>
  
+```
 
 Java based:
 
-复制代码
+```Java
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LocalRepository implements DisposableBean {
@@ -24,7 +25,7 @@ public class LocalRepository implements DisposableBean {
     }
 }
 
-复制代码
+```
 
 ScopeProxyMode.TARGET_CLASS means:
 
