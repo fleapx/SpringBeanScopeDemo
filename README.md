@@ -3,7 +3,8 @@
 学习spring session的使用和在spring boot自定义thread scope。
 
 > * 原理
-> * 使用session scope
+> * 使用session scope bean
+> * session scope bean 的使用场景
 > * 自定义thread scope（代码copy自网络）
 > * 注册 thread scope 实现
 > * 实现自己的 ThreadScoped 注解
@@ -38,7 +39,7 @@ public Object get(String name, ObjectFactory objectFactory) {
 ThreadScope.get(), name=scopedTarget.threadBean1
 ```
 
-# 使用session scope
+# 使用session scope bean
 
 2种
 ```Java
@@ -53,6 +54,12 @@ ThreadScope.get(), name=scopedTarget.threadBean1
 ```
 
 使用 `@SessionScope` 更加方便，不需要指定 proxyMode，是因为他默认值就是 `ScopedProxyMode.TARGET_CLASS`。
+
+# session scope bean 的使用场景
+
+主要可以用于保存用户登录信息，缓存数据，提升性能。
+
+最常见的如类似查询用户私信条数，用户待处理条数这些，一次会话查询一次保存到session scope的bean里面，页面刷新的时候就不会重复查询，减少数据库压力提升性能。比使用ThreadLocal更加方便合理。
 
 # 自定义 thread scope 实现（代码copy自网络）
 
